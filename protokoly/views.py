@@ -16,9 +16,12 @@ class LandingPage(View):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
+        # get url
         url = request.POST.get('url')
         validator = URLValidator()
         url_is_valid = True
+        # get project
+        project = request.POST.get('project')
         try:
             validator(url)
         except ValidationError as msg:
@@ -41,7 +44,7 @@ class LandingPage(View):
             bk_data = None
         if bk_data:
             try:
-                filename, generated_file = protokol_generator(bk_data)
+                filename, generated_file = protokol_generator(bk_data, project)
             except Exception as msg:
                 print(msg)
                 filename = None

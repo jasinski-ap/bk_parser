@@ -6,7 +6,7 @@ from docx.shared import Pt
 from io import BytesIO
 
 
-def protokol_generator(bk_data):
+def protokol_generator(bk_data, project):
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     TEMPLATE_FILE = os.path.join(BASE_DIR, 'protokoly', 'Wzor_pliku.docx')
@@ -117,10 +117,17 @@ def protokol_generator(bk_data):
         style=heading1,
     )
 
-    paragraph3_text = """
-    1.	Adrian Jasiński - Ekspert
-    2.	Tomasz Wiewióra – Kierownik Działu Finansowania Inwestycji
-    """
+    if project == "LabGears":
+        paragraph3_text = """
+        1.	Adrian Jasiński - Ekspert
+        2.	Tomasz Wiewióra – Kierownik Działu Finansowania Inwestycji
+        """
+    else:
+        paragraph3_text = """
+        1.	
+        2.	
+        3.
+        """
     paragraph3 = document.add_paragraph(paragraph3_text, style=normal)
 
     # IV.	Upublicznienie zapytania
