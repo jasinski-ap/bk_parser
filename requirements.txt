@@ -3,4 +3,5 @@ beautifulsoup4
 python-docx
 requests
 pyopenssl
-# django-heroku
+gunicorn
+django-heroku
