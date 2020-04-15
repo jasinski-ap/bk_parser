@@ -24,7 +24,7 @@ SECRET_KEY = 's$9u2onxc5$uss#26dgp9r_(nn78ndt5*_b92m&)2i5ci4t2dp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['adamed.pythonanywhere.com', 'localhost']
 
 # Application definition
 
