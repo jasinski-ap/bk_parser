@@ -1,5 +1,7 @@
 import re
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 
 # define url
@@ -16,7 +18,14 @@ def bk_dict_from_url(url):
         }
     )
     # get data from url
-    req = requests.get(url, headers)
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    req = session.get(url)
+    # req = requests.get(url, headers)
     # create bs soup
     soup = BeautifulSoup(req.content, 'html.parser')
     # dicionary containing sections as keys and section text as values
