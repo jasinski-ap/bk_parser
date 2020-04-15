@@ -73,5 +73,8 @@ def bk_dict_from_url(url):
     data_dict['Termin składania ofert'] = ''.join(
         data_dict['Termin składania ofert'].strip().split()
     ).replace("do", "do ").replace("dnia", "dnia: ")
+
+    for key, value in data_dict.items():
+        data_dict[key] = re.sub(r'\n\s*\n', '\n\n', value)
     # return data dict
     return data_dict
