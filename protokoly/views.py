@@ -39,7 +39,9 @@ class LandingPage(View):
             except Exception as msg:
                 print(msg)
                 bk_data = None
-                messages.error(request, 'Error. Data not retrived from url.')
+                messages.error(
+                    request, 'Error. Data not retrived from url. %s' % msg
+                )
         else:
             bk_data = None
         if bk_data:
