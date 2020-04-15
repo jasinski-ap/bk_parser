@@ -283,6 +283,26 @@ def protokol_generator(bk_data, project):
         paragraph10_run2 = paragraph10.add_run(
             bk_data['Kryteria oceny i opis sposobu przyznawania punktacji']
         )
+
+    # XI.	Wykaz ofert dopuszczonych do oceny w postępowaniu ofertowym na podstawie przyjętych kryteriów
+    paragraph11_header_text = "Wykaz ofert dopuszczonych do oceny w postępowaniu ofertowym na podstawie przyjętych kryteriów"
+    paragraph11_header = document.add_paragraph(
+        paragraph11_header_text,
+        style=heading1,
+    )
+
+    # XII.	Ocena ofert na podstawie określonych w zapytaniu kryteriów oceny ofert
+    paragraph12_header_text = "Ocena ofert na podstawie określonych w zapytaniu kryteriów oceny ofert"
+    paragraph12_header = document.add_paragraph(
+        paragraph12_header_text,
+        style=heading1,
+    )
+    # XIII.	Podsumowanie
+    paragraph13_header_text = "Podsumowanie / Wybór wykonawcy"
+    paragraph13_header = document.add_paragraph(
+        paragraph13_header_text,
+        style=heading1,
+    )
     # define filename
     filename = f"{bk_data['Numer ogłoszenia']}_{date_string.replace('.', '_')}.docx"
     # define in memoty bytes structure
