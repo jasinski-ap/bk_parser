@@ -1,5 +1,6 @@
 import re
 import requests
+from phonenumbers import parse as phone_parse
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
@@ -66,10 +67,28 @@ def bk_dict_from_url(url):
         key = key.strip()
         if key == "Adres":
             # print(key)
-            adres = headers_data[index].get_text('\n') + ' ' + headers_data[
-                index + 1].get_text('\n')
+            # address in section 1
+            section1 = headers_data[index].get_text('\n')
+            print('section1: ', section1)
+            # address continue or phone number in section 2
+            section2 = headers_data[index + 1].get_text('\n')
+            print('section2: ', section2)
+            # rule for phone number
+            print(
+                'section2 replace',
+                section2.strip().replace(' ', '').replace('-', '')
+            )
+            check_phone = phone_parse(
+                section2.strip().replace(' ', '').replace('-', '')
+            )
+
+            if not check_phone:
+                adres = headers_data[index].get_text('\n') + ' ' + headers_data[
+                    index + 1].get_text('\n')
+                index_plus = True
+            else:
+                adres = headers_data[index].get_text('\n')
             data_dict[key] = ' '.join(adres.strip().split())
-            index_plus = True
             # print(data_dict['Adres'])
         else:
             if index_plus:
