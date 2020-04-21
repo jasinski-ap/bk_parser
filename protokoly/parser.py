@@ -75,9 +75,12 @@ def bk_dict_from_url(url):
             # address continues or phone number
             section2 = headers_data[index + 1].get_text('\n')
             # check section2 is phone number
-            check_phone = phone_parse(
-                section2.strip().replace(' ', '').replace('-', '')
-            )
+            try:
+                check_phone = phone_parse(
+                    section2.strip().replace(' ', '').replace('-', '')
+                )
+            except Exception:
+                check_phone = None
             # if not join sections and swich index
             if not check_phone:
                 adres = headers_data[index].get_text('\n') + ' ' + headers_data[
@@ -108,7 +111,7 @@ def bk_dict_from_url(url):
     # fix display of data
     data_dict['Termin składania ofert'] = ''.join(
         data_dict['Termin składania ofert'].strip().split()
-    ).replace("do", "do ").replace("dnia", "dnia: ")
+    ).replace("do", "do ").replace("dnia", "dnia: ").replace('-', '.')
 
     # delete duble spaces in text
     for key, value in data_dict.items():
