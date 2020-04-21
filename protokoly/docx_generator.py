@@ -303,6 +303,28 @@ def protokol_generator(bk_data, project):
         paragraph13_header_text,
         style=heading1,
     )
+
+    # Jeżeli są informacje o wybranym wykonwcy
+    if 'Nazwa i adres, data wpłynięcia oferty oraz jej cena' in bk_data:
+        paragraph13 = document.add_paragraph(style=normal)
+        if "Informacja o wybranym wykonawcy" in bk_data:
+            paragraph13_run0 = paragraph13.add_run(
+                bk_data["Informacja o wybranym wykonawcy"]
+            )
+            paragraph13_run0.add_break()
+            paragraph13_run0.add_break()
+
+        paragraph13_run1 = paragraph13.add_run(
+            'Nazwa i adres, data wpłynięcia oferty oraz jej cena'
+        )
+        paragraph13_run1.bold = True
+        paragraph13_run1.add_break()
+
+        paragraph13_run2 = paragraph13.add_run(
+            bk_data['Nazwa i adres, data wpłynięcia oferty oraz jej cena']
+        )
+
+    # RETURN DOCX FILE
     # define filename
     filename = f"{bk_data['Numer ogłoszenia']}_{date_string.replace('.', '_')}.docx"
     # define in memoty bytes structure
@@ -311,5 +333,5 @@ def protokol_generator(bk_data, project):
     document.save(bio)
     # rewind the stream
     bio.seek(0)
-    # return filename and bytes structure
+    # return filename and file bytes structure
     return (filename, bio.getvalue())

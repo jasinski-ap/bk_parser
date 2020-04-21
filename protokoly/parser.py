@@ -19,15 +19,17 @@ def bk_dict_from_url(url):
         }
     )
     # get data from url
+    # try 3 times if failed
     session = requests.Session()
     retry = Retry(connect=3, backoff_factor=0.5)
     adapter = HTTPAdapter(max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
+    # get request from url
     req = session.get(url)
     # req = requests.get(url, headers)
-    # create bs soup
+    # create bs soup by parsing request content
     soup = BeautifulSoup(req.content, 'html.parser')
     # dicionary containing sections as keys and section text as values
     data_dict = {}
@@ -65,43 +67,50 @@ def bk_dict_from_url(url):
     for index, header in enumerate(headers[4:]):
         key = header.text
         key = key.strip()
+        # Some times adress has 2 sections which require to join
         if key == "Adres":
             # print(key)
             # address in section 1
             section1 = headers_data[index].get_text('\n')
-            print('section1: ', section1)
-            # address continue or phone number in section 2
+            # address continues or phone number
             section2 = headers_data[index + 1].get_text('\n')
-            print('section2: ', section2)
-            # rule for phone number
-            print(
-                'section2 replace',
-                section2.strip().replace(' ', '').replace('-', '')
-            )
+            # check section2 is phone number
             check_phone = phone_parse(
                 section2.strip().replace(' ', '').replace('-', '')
             )
-
+            # if not join sections and swich index
             if not check_phone:
                 adres = headers_data[index].get_text('\n') + ' ' + headers_data[
                     index + 1].get_text('\n')
+                # swicher for index
                 index_plus = True
             else:
                 adres = headers_data[index].get_text('\n')
             data_dict[key] = ' '.join(adres.strip().split())
             # print(data_dict['Adres'])
+        elif key == "Nazwa i adres, data wpłynięcia oferty oraz jej cena":
+            try:
+                wykonawca = "Informacja o wybranym wykonawcy"
+                data_dict[wykonawca] = headers_data[index].get_text('\n')
+                data_dict[key] = headers_data[index + 1].get_text('\n')
+            except IndexError:
+                data_dict[key] = headers_data[index].get_text('\n')
         else:
+            # swich index if address has 2 sections
             if index_plus:
                 index += 1
+            # add data to key
             data_dict[key] = headers_data[index].get_text('\n')
-    # fix some data
+    # fix display of data
     data_dict['Numer ogłoszenia'] = ''.join(
         data_dict['Numer ogłoszenia'].strip().split()
     )
+    # fix display of data
     data_dict['Termin składania ofert'] = ''.join(
         data_dict['Termin składania ofert'].strip().split()
     ).replace("do", "do ").replace("dnia", "dnia: ")
 
+    # delete duble spaces in text
     for key, value in data_dict.items():
         data_dict[key] = re.sub(r'\n\s*\n', '\n\n', value)
     # return data dict
