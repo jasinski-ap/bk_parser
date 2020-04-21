@@ -92,6 +92,9 @@ def bk_dict_from_url(url):
             data_dict[key] = ' '.join(adres.strip().split())
             # print(data_dict['Adres'])
         elif key == "Nazwa i adres, data wpłynięcia oferty oraz jej cena":
+            # swich index if address has 2 sections
+            if index_plus:
+                index += 1
             try:
                 wykonawca = "Informacja o wybranym wykonawcy"
                 data_dict[wykonawca] = headers_data[index].get_text('\n')
