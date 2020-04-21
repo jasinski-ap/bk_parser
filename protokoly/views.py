@@ -25,7 +25,6 @@ class LandingPage(View):
         try:
             validator(url)
         except ValidationError as msg:
-            print(msg)
             url_is_valid = False
             messages.error(request, 'Invalid URL.')
 
@@ -37,7 +36,6 @@ class LandingPage(View):
             try:
                 bk_data = bk_dict_from_url(url)
             except Exception as msg:
-                print(msg)
                 bk_data = None
                 messages.error(
                     request, 'Error. Data not retrived from url. %s' % msg
@@ -48,7 +46,6 @@ class LandingPage(View):
             try:
                 filename, generated_file = protokol_generator(bk_data, project)
             except Exception as msg:
-                print(msg)
                 filename = None
                 generated_file = None
                 messages.error(request, 'Error. Report not generated.')
