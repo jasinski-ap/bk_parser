@@ -2,25 +2,26 @@ import os
 from datetime import datetime
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.style import WD_STYLE
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import Inches
 from docx.shared import Pt
 from io import BytesIO
 
 
 def protokol_generator(bk_data, project):
-
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     TEMPLATE_FILE = os.path.join(BASE_DIR, 'protokoly', 'Wzor_pliku.docx')
     document = Document(TEMPLATE_FILE)
     # styles
     heading1 = document.styles['Heading 1']
     normal = document.styles['Normal']
-
     # print all avaiable styles
     # for style in document.styles:
     #     print("style.name == %s" % style.name)
-
     now = datetime.now()
     date_string = now.strftime("%d.%m.%Y")
+
     paragraph0_date_text = f"Pieńków, {date_string}"
     paragraph0_date = document.add_paragraph(
         paragraph0_date_text,
@@ -55,7 +56,7 @@ def protokol_generator(bk_data, project):
 
     # align to right
 
-    # I. Zamawiający
+    ### I. Zamawiający
     paragraph1_header_text = 'Zamawiający'
     paragraph1_header = document.add_paragraph(
         paragraph1_header_text,
@@ -90,7 +91,7 @@ def protokol_generator(bk_data, project):
         """
     paragraph1.add_run(paragraph1_text)
 
-    # II. Informacje o projekcie
+    ### II. Informacje o projekcie
     paragraph2_header_text = 'Informacje o projekcie'
     paragraph2_header = document.add_paragraph(
         paragraph2_header_text,
@@ -110,7 +111,7 @@ def protokol_generator(bk_data, project):
         paragraph2_run4 = paragraph2.add_run(bk_data['Numer projektu'])
         paragraph2_run4.add_break()
 
-    # III.
+    ### III.
     paragraph3_header_text = "Osoby wykonujące czynności związane z przeprowadzeniem postępowania o udzielenie zamówienia"
     paragraph3_header = document.add_paragraph(
         paragraph3_header_text,
@@ -130,7 +131,7 @@ def protokol_generator(bk_data, project):
         """
     paragraph3 = document.add_paragraph(paragraph3_text, style=normal)
 
-    # IV.	Upublicznienie zapytania
+    ### IV.	Upublicznienie zapytania
     paragraph4_header_text = "Upublicznienie zapytania"
     paragraph4_header = document.add_paragraph(
         paragraph4_header_text,
@@ -156,7 +157,7 @@ def protokol_generator(bk_data, project):
             f'Oferty należy złożyć {bk_data["Termin składania ofert"]}'
         )
 
-    # V.	Miejsce i sposób składania ofert
+    ### V.	Miejsce i sposób składania ofert
     paragraph5_header_text = "Miejsce i sposób składania ofert"
     paragraph5_header = document.add_paragraph(
         paragraph5_header_text,
@@ -166,7 +167,7 @@ def protokol_generator(bk_data, project):
     paragraph5_text = bk_data['Miejsce i sposób składania ofert']
     paragraph5 = document.add_paragraph(paragraph5_text, style=normal)
 
-    # VI.	Przedmiot zamówienia
+    ### VI.	Przedmiot zamówienia
     paragraph6_header_text = "Przedmiot zamówienia"
     paragraph6_header = document.add_paragraph(
         paragraph6_header_text,
@@ -176,7 +177,7 @@ def protokol_generator(bk_data, project):
     paragraph6_text = bk_data['Przedmiot zamówienia']
     paragraph6 = document.add_paragraph(paragraph6_text, style=normal)
 
-    # VII.	Zestawienie ofert
+    ### VII.	Zestawienie ofert
     paragraph7_header_text = "Zestawienie ofert"
     paragraph7_header = document.add_paragraph(
         paragraph7_header_text,
@@ -186,7 +187,7 @@ def protokol_generator(bk_data, project):
     paragraph7_text = "W odpowiedzi na zapytanie ofertowe wpłynęły następujące oferty:"
     paragraph7 = document.add_paragraph(paragraph7_text, style=normal)
 
-    # VIII.	Ocena spełnienia warunków udziału w postępowaniu
+    ### VIII.	Ocena spełnienia warunków udziału w postępowaniu
     paragraph8_header_text = "Ocena spełnienia warunków udziału w postępowaniu"
     paragraph8_header = document.add_paragraph(
         paragraph8_header_text,
@@ -242,7 +243,7 @@ def protokol_generator(bk_data, project):
     paragraph8_run11.add_break()
     paragraph8_run11.add_break()
 
-    # IX.	Ocena wymaganych oświadczeń i dokumentów
+    ### IX.	Ocena wymaganych oświadczeń i dokumentów
     paragraph9_header_text = "Ocena wymaganych oświadczeń i dokumentów"
     paragraph9_header = document.add_paragraph(
         paragraph9_header_text,
@@ -261,11 +262,14 @@ def protokol_generator(bk_data, project):
             bk_data['Lista dokumentów/oświadczeń wymaganych od Wykonawcy']
         )
 
-    paragraph9_run2 = paragraph9.add_run("Ocena spełnienia warunków:")
+    paragraph9_run2 = paragraph9.add_run()
+    paragraph9_run2.add_break()
+    paragraph9_run2.add_break()
+    paragraph9_run2.add_text("Ocena spełnienia warunków:")
     paragraph9_run2.bold = True
     paragraph9_run2.add_break()
 
-    # X.	Kryteria oceny
+    ### X.	Kryteria oceny
     paragraph10_header_text = "Kryteria oceny"
     paragraph10_header = document.add_paragraph(
         paragraph10_header_text,
@@ -284,20 +288,20 @@ def protokol_generator(bk_data, project):
             bk_data['Kryteria oceny i opis sposobu przyznawania punktacji']
         )
 
-    # XI.	Wykaz ofert dopuszczonych do oceny w postępowaniu ofertowym na podstawie przyjętych kryteriów
+    ### XI.	Wykaz ofert dopuszczonych do oceny w postępowaniu ofertowym na podstawie przyjętych kryteriów
     paragraph11_header_text = "Wykaz ofert dopuszczonych do oceny w postępowaniu ofertowym na podstawie przyjętych kryteriów"
     paragraph11_header = document.add_paragraph(
         paragraph11_header_text,
         style=heading1,
     )
 
-    # XII.	Ocena ofert na podstawie określonych w zapytaniu kryteriów oceny ofert
+    ### XII.	Ocena ofert na podstawie określonych w zapytaniu kryteriów oceny ofert
     paragraph12_header_text = "Ocena ofert na podstawie określonych w zapytaniu kryteriów oceny ofert"
     paragraph12_header = document.add_paragraph(
         paragraph12_header_text,
         style=heading1,
     )
-    # XIII.	Podsumowanie
+    ### XIII.	Podsumowanie
     paragraph13_header_text = "Podsumowanie / Wybór wykonawcy"
     paragraph13_header = document.add_paragraph(
         paragraph13_header_text,
@@ -324,6 +328,25 @@ def protokol_generator(bk_data, project):
             bk_data['Nazwa i adres, data wpłynięcia oferty oraz jej cena']
         )
 
+    ### XIV. Informacje o Braku Powiązań
+    if project == "LabGears":
+        add_oswiadczenie(
+            document,
+            bk_data,
+            project,
+            "Adrian Jasiński",
+            "Ekpert",
+        )
+        add_oswiadczenie(
+            document,
+            bk_data,
+            project,
+            "Tomasz Wiewióra",
+            "Kierownik Działu Finansowania Inwestycji",
+        )
+    else:
+        add_oswiadczenie(document, bk_data, project, "   ", "   ")
+        add_oswiadczenie(document, bk_data, project, "   ", "   ")
     # RETURN DOCX FILE
     # define filename
     filename = f"{bk_data['Numer ogłoszenia']}_{date_string.replace('.', '_')}.docx"
@@ -335,3 +358,120 @@ def protokol_generator(bk_data, project):
     bio.seek(0)
     # return filename and file bytes structure
     return (filename, bio.getvalue())
+
+
+def add_oswiadczenie(document, bk_data, project, imie_nazwisko, stanowisko):
+    # dodaj przerwe aby kolejne informacje były na nowej stronie
+    document.add_page_break()
+    normal = document.styles['Normal']
+    list2 = document.styles['List Paragraph']
+    now = datetime.now()
+    date_string = now.strftime("%d.%m.%Y")
+
+    paragraph0_date_text = f"Pieńków, {date_string}"
+    paragraph0_date = document.add_paragraph(
+        paragraph0_date_text,
+        style=normal,
+    )
+    # align to right
+    paragraph0_date.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    paragraph0_date_run1 = paragraph0_date.add_run()
+    paragraph0_date_run1.add_break()
+
+    # add page top
+    paragraph14_top = document.add_paragraph(style=normal)
+    # add run
+    paragraph14_top_run0 = paragraph14_top.add_run()
+    # add text
+    paragraph14_top_run0.add_text(imie_nazwisko)
+    # set font size
+    paragraph14_top_run0.add_break()
+
+    paragraph14_top_run1 = paragraph14_top.add_run()
+    paragraph14_top_run1.add_text("Imię i nazwisko")
+    paragraph14_top_run1_font = paragraph14_top_run1.font
+    paragraph14_top_run1_font.size = Pt(8)
+    paragraph14_top_run1.add_break()
+
+    paragraph14_top_run2 = paragraph14_top.add_run()
+    paragraph14_top_run2.add_text(stanowisko)
+    paragraph14_top_run2.add_break()
+
+    paragraph14_top_run3 = paragraph14_top.add_run()
+    paragraph14_top_run3_font = paragraph14_top_run3.font
+    paragraph14_top_run3_font.size = Pt(8)
+    paragraph14_top_run3.add_text("Stanowisko")
+    paragraph14_top_run3.add_break()
+
+    paragraph14_header_text = "Oświadczenie o braku powiązań osobowych lub kapitałowych"
+    paragraph14_header = document.add_paragraph(style=normal)
+    paragraph14_header.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph14_header_run = paragraph14_header.add_run()
+    paragraph14_header_run.add_text(paragraph14_header_text)
+    paragraph14_header_run.bold = True
+    paragraph14_header_run.add_break()
+
+    paragraph14_body1 = document.add_paragraph(style=normal)
+    paragraph14_body1.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    paragraph14_body1_run0 = paragraph14_body1.add_run()
+    paragraph14_body1_run0_text = f"""
+    Ja niżej podpisana, oświadczam, że nie jestem powiązana osobowo lub kapitałowo z żadnym z oferentów, którzy złożyli swoje oferty w odpowiedzi na zapytanie ofertowe nr {bk_data['Numer ogłoszenia']}.
+    """
+    paragraph14_body1_run0.add_text(paragraph14_body1_run0_text)
+    paragraph14_body1_run0.add_break()
+
+    paragraph14_body1_run1 = paragraph14_body1.add_run()
+
+    paragraph14_body1_run1_text = """
+    Przez powiązania kapitałowe lub osobowe rozumie się wzajemne powiązania między Zamawiającym lub osobami upoważnionymi do zaciągania zobowiązań w imieniu Zamawiającego
+     lub osobami wykonującymi w imieniu Zamawiającego czynności związane z przygotowaniem i przeprowadzeniem procedury wyboru wykonawcy a wykonawcą, polegające w szczególności na:\n
+    """
+    paragraph14_body1_run1.add_text(paragraph14_body1_run1_text)
+    paragraph14_body1_run1.add_break()
+
+    paragraph14_body2 = document.add_paragraph(style=list2)
+    paragraph_format = paragraph14_body2.paragraph_format
+    paragraph_format.left_indent
+    paragraph_format.left_indent = Inches(0.7)
+
+    paragraph14_body2_run0 = paragraph14_body2.add_run()
+    paragraph14_body2_run0.add_text(
+        "a)	  uczestniczeniu w spółce jako wspólnik spółki cywilnej lub spółki osobowej,"
+    )
+    paragraph14_body2_run0.add_break()
+    paragraph14_body2_run1 = paragraph14_body2.add_run()
+    paragraph14_body2_run1.add_text(
+        "b)	  posiadaniu co najmniej 10 % udziałów lub akcji,"
+    )
+    paragraph14_body2_run1.add_break()
+    paragraph14_body2_run2 = paragraph14_body2.add_run()
+    paragraph14_body2_run2.add_text(
+        "c)	  pełnieniu funkcji członka organu nadzorczego lub zarządzającego, prokurenta, pełnomocnika,"
+    )
+    paragraph14_body2_run2.add_break()
+    paragraph14_body2_run3 = paragraph14_body2.add_run()
+    paragraph14_body2_run3.add_text(
+        """d)   pozostawaniu w związku małżeńskim, w stosunku pokrewieństwa lub powinowactwa w linii prostej, pokrewieństwa lub powinowactwa w linii bocznej do drugiego stopnia lub w stosunku przysposobienia, opieki lub kurateli."""
+    )
+    paragraph14_body2_run3.add_break()
+
+    paragraph14_bottom = document.add_paragraph(style=normal)
+    paragraph14_bottom.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+    paragraph14_bottom_run0 = paragraph14_bottom.add_run()
+    paragraph14_bottom_run0.add_break()
+    paragraph14_bottom_run0.add_break()
+    paragraph14_bottom_run0.add_break()
+    paragraph14_bottom_run0.add_break()
+    paragraph14_bottom_run0.add_break()
+    paragraph14_bottom_run0.add_break()
+
+    paragraph14_bottom_run0.add_text("...............................")
+    paragraph14_bottom_run0.add_break()
+
+    paragraph14_bottom_run1 = paragraph14_bottom.add_run()
+    paragraph14_bottom_run1.add_text("data i podpis")
+    paragraph14_bottom_run1_font = paragraph14_top_run1.font
+    paragraph14_bottom_run1_font.size = Pt(8)
+
+    return document
